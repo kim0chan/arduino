@@ -39,3 +39,134 @@ Real-time에 지연 없이 computing 해야 한다.
 성능은 처리 속도, 처리량, 응답 시간 등의 측정 지표를 나타내며, 높은 성능이 요구될 경우 빠른 처리 속도와 높은 처리 용량이 필요하다. 반면 전력 소비는 디자인이 소비하는 전력의 양을 나타내며, 낮은 전력 소비가 요구되는 경우 더 작은 전력을 사용하는 것이 이상적이다.  
 
 이 두 가지 메트릭은 서로 경쟁 관계에 놓일 수 있는데, 성능을 높이기 위해 클럭 주파수를 높이면 더 빠른 처리 속도를 얻을 수 있지만, 동시에 전력 소비가 증가할 수 있다. 또는 반대로 전력 소비를 줄이기 위해 클럭 주파수를 낮추면 전력 소비는 감소하지만, 처리 속도가 낮아질 수 있다. 이처럼 성능과 전력 소비는 서로 트레이드오프 관계에 있어서 디자이너는 이를 고려하여 디자인 결정을 내려야 한다.
+> 비용과 품질 등 competing metric 쌍은 더 존재할 수도 있다.
+
+
+## 🔵 Time-to-market (★)
+시스템을 출시하여 소비자들에게 팔 수 있을 만한 정도까지 개발하는 데에 걸리는 시간
+
+### 💥 Market window
+상품이 가장 잘 팔리는 기간(highest sales)  
+
+### ❓ 왜 시장 진입을 일찍 하는 것이 좋은가?  
+경쟁적인 시장에서 초기에 시장에 진입하는 것이 매우 중요하기 때문이다. (Delays can be costly)
+
+Market Window는 보통 특정 제품이나 기술이 수요가 높은 시점을 나타내는데, 이 시점에 제품이 출시되면 <u>경쟁 업체들보다 먼저 시장을 점유하고 고객의 관심과 수요를 끌어낼 수 있다</u>. 초기에 시장에 진입하는 것은 제품의 성공을 좌우할 수 있다. Market Window를 놓치면 경쟁 업체들이 이미 시장을 점유하고 있을 수 있고, 고객의 요구와 경쟁 상황이 변화하면서 제품의 경쟁력이 감소할 수 있다.
+
+제품이 Market Window를 통해 초기에 출시되면 다양한 혜택이 있다. 예를 들어, 높은 가격을 유지하거나 초기 고객들의 지지를 받아 브랜드 이미지를 구축하고 고객의 로열티를 확보할 수 있다. 또한 초기에 출시되면 제품에 대한 미래의 개선과 업데이트를 반영할 수 있는 시간적 여유를 얻을 수 있다.
+
+
+## 🔵 Cost Metrics
+* Unit cost: 시스템의 복제(copy)를 생산하는 데 드는 비용(NRE 비용 제외)
+* NRE cost: 시스템 초기 개발 비용
+* Total cost: NRE cost + unit cost * # of units
+* Per-product cost: total cost / # of units = (NRE cost / # of units) + unit cost
+
+### ❓ Prime market window가 1년인 상품
+일부 스마트폰 모델들이 해당될 수 있다. 스마트폰 시장은 빠르게 진화하고 경쟁이 치열하기 때문에 새로운 모델이 출시되면 기존 모델들이 상대적으로 빠르게 시장에서 사라질 수 있다.  
+
+스마트폰 기업들은 매년 새로운 모델을 출시하며, 이들 모델들의 prime market window가 약 1년 정도인 경우가 있다. 이들 모델들은 출시 후 약 1년 정도의 시간 동안 가장 최신 기술과 디자인을 갖추고 있어 소비자들에게 가장 높은 관심을 받게 된다. 그러나 이후에는 새로운 모델들이 출시되면서 시장에서 빠르게 사라질 수 있다.
+
+
+## 🔵 Performance Design Metrics
+* 널리 쓰이지만 남용되는 metric  
+클럭 주파수, IPS(Instructions Per Second) - 유저 입장에선 😐
+* Latency(response time)  
+task start에서 end까지 걸린 시간
+* Throughput  
+단위 시간 동안의 처리량
+* Speedup  
+speedup of B over A = B's performance / A's performance
+
+
+## 🔵 임베디드 시스템의 세 가지 핵심 기술
+* 프로세서 기술
+* IC(집적 회로) 기술
+* Design(설계) 기술
+
+
+## 🔵 **Processor Technology**
+프로세서: 시스템에 요구되는 기능을 구현하기 위해 사용되는 계산 엔진의 아키텍처
+* ✔️ **General-purpose processors**
+    * 다양한 응용 프로그램에 사용되는 programmable device(A.K.A. microprocessor)
+    * 특징
+        * 프로그램 메모리
+        * General datapath, 대 용량 register file, general ALU
+    * 이용자 편익
+        * 짧은 time-to-market과 적은 NRE costs
+        * 고도의 유연성
+    * 예시: Intel Core i7, i5, i3 등 범용 프로세서들
+* ✔️ **Single-purpose processors**
+    * 한 가지 프로그램을 실행하기 위해 설계된 디지털 회로(A.K.A. coprocessor, accelerator or peripheral)
+    * 특징
+        * 한 가지 프로그램을 실행하기 위한 구성 요소들만을 포함하고 있음
+        * 프로그램 메모리가 없음
+    * 이용자 편익
+        * 빠름
+        * 저전력
+        * 작은 사이즈
+    * 예시: 그래픽 가속기, 암호화 프로세서, 실시간 제어 프로세서 등
+* ✔️ **Application-specific processors**
+    * 프로그래밍 가능하나, 비슷한 특성을 가지는 특정 응용들에 최적화 되어있음(general-purpose, single-purpose의 타협점).
+    * 특징
+        * 프로그램 메모리
+        * Optimized datapath
+        * Special functional units
+    * 이용자 편익
+        * 괜찮은 유연성
+        * 괜찮은 성능
+        * 괜찮은 사이즈 및 전력 소모
+
+
+## 🔵 IC Technology
+디지털(게이트 레벨) 구현이 집적 회로에 매핑되는 방식
+* ✔️ **Full-custom/VLSI**
+    * 디자이너가 전적으로 디지털 논리 회로를 사용자 정의로 제작한다.
+        * 트랜지스터 배치
+        * 트랜지스터 사이징
+        * 와이어 연결(routing)
+    * 장점
+        * 높은 통합도와 성능
+        * 작은 사이즈
+        * 저전력
+    * 단점
+        * 설계 및 제작에 시간과 비용이 많이 든다(NRE cost, time-to-market)
+* ✔️ **Semi-custom**
+    * 디자이너가 이미 디자인된 논리 블록을 결합하여 디지털 논리 회로를 구현한다.
+    * 장점
+        * 괜찮은 성능
+        * 괜찮은 사이즈
+        * full-custom에 비해 제작 시간과 비용이 적게 소모된다.
+        * 즉, 생산량이 높을 경우에도 효율적으로 사용할 수 있다.
+    * 단점
+        * 그래도 설계 및 제작에 수 주에서 수 개월이 소모된다..
+* ✔️ **PLD** (Programmable Logic Device)
+    * 모든 Layer가 이미 존재하고, 필요에 따라 논리 회로를 프로그래밍하여 구현한다.
+    * 장점
+        * 설계, 제작 시간이 짧다.
+        * NRE cost가 낮아서 생산량이 적어도 유용하다.
+    * 단점
+        * 큰 사이즈
+        * 고전력
+        * Unit cost가 높다.
+        * 느리다
+
+
+## 🔵 Design Technology
+시스템 기능 요구사항에 대한 concept를 실제 구현으로 옮기는 방법에 대한 기술
+* ✔️ **Compilation/Synthesis**
+    * 디자이너들에게 높은 수준의 추상화와 자동화를 제공한다.
+    * 하이 레벨 랭기지로 하드웨어 설계를 기술하고 컴파일/합성 도구가 이를 하드웨어 디자인으로 변환함.
+    * 이는 빠른 개발과 디자인 수정을 가능하게 하여 생산성을 높인다.
+* ✔️ **Libraries/IP**
+    * 미리 디자인된 하드웨어 모듈들의 집합
+    * 디자이너들은 이를 활용하여 설계 속도와 효율성을 높일 수 있음
+* ✔️ **Test/Verification**
+    * 하드웨어 설계의 신뢰성과 안정성을 보장하기 위한 단계
+    * 테스트/검증 도구들은 관련 기능들을 제공하여 설계의 오류를 찾고 수정하며 제품 품질 향상에 기여
+    
+
+## 🔵 무어의 법칙 (Moore's law)
+> IC transistor capacity has doubled roughly every 18 months for the past several decades  
+
+마이크로칩에 저장할 수 있는 데이터 분량이 18-24개월 마다 두 배씩 증가한다는 법칙
