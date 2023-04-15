@@ -14,3 +14,4 @@
 * Controlling a DC motor with a PWM
 * LCD controller
 * Keypad controller
+* Stepper motor controller
