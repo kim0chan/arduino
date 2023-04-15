@@ -4,10 +4,12 @@ GP processor는 unit cost가 낮은데 왜냐하면 unit을 겁나 많이 찍어
 즉 NRE cost가 더 높아도 되니(acceptable) 초기 디자인을 신중하게 하는 것이 좋다.  
 Low NRE cost, shor time-ti-market/prototype, high flexibility
 
-### ❓ 왜 general-purpoose processor가 single-purpose processor를 설게하는 것보다 더 경제적일 수 있는지?
+### ❓ 왜 general-purpoose processor가 single-purpose processor를 설계하는 것보다 더 경제적일 수 있는지?
 (1) 범용 프로세서는 대량 생산되기 때문에 생산 비용이 낮아질 수 있다. 또한 다양한 고객에게 판매되기 때문에 수요가 많아져 경쟁력이 높아질 수 있다.  
 (2) 특정 목적용 프로세서를 자체적으로 설계하는 경우에는 전문적인 설계 및 개발 인력, 장비, 시간 등이 필요하다. 이에 비해 일반 목적용 프로세서는 이미 많은 개발 및 설계 노력이 들어간 제품이므로 개발 및 설계 비용이 상대적으로 낮을 수 있다.  
-(3) 특정 목적용 프로세서를 자체적으로 설계하고 제작하는 경우, 해당 제품의 유지보수와 업그레이드에 필요한 비용이 상대적으로 높아질 수 있는 반면, 일반 목적용 프로세서는 이미 많은 사용자들이 사용하고 있기 때문에 유지보수 및 업그레이드 비용이 낮아질 수 있다.
+(3) 특정 목적용 프로세서를 자체적으로 설계하고 제작하는 경우, 해당 제품의 유지보수와 업그레이드에 필요한 비용이 상대적으로 높아질 수 있는 반면, 일반 목적용 프로세서는 이미 많은 사용자들이 사용하고 있기 때문에 유지보수 및 업그레이드 비용이 낮아질 수 있다.  
+
+<u>사실 그냥 많이 팔리면 NRE cost가 spread된다.</u>
 
 ### 🔹 Basic Architecture(3p 그림 참조)
 * Control unit과 datapath  
@@ -108,6 +110,63 @@ Operand field에 data가 바로 들어있다.
 
 
 ## ❗ 예제나 샘플 코드는 직접 해보시고,,
+
+### ❓ `MOV` intruction의 단계를 세부적으로 파고 들어가보자.
+`MOV Rn, direct`
+1. `M[PC]`를 IR로 fetch한다.
+2. `M[direct]`의 내용을 레지스터 `Rn`으로 불러온다.
+
+`MOV direct, Rn`
+1. `M[PC]`를 IR로 fetch한다.
+2. 레지스터 `Rn`의 내용을 `M[direct]`으로 불러온다.
+
+`MOV @Rn, Rm`
+1. `M[PC]`를 IR로 fetch한다.
+2. `M[Rm]`의 내용을 레지스터 `Rn`으로 불러온다.
+
+`MOV Rn, #imm`
+1. `M[PC]`를 IR로 fetch한다.
+2. immediate value를 레지스터 `Rn`으로 불러온다.
+
+### ❓ 합을 구하는 어셈블리 프로그램의 크기를 줄이기 위해 하나의 instruction을 instruction set에 추가한다면 ..
+`JNZ Rn, relative`를 추가한다면 어떨까 ?
+```
+0:      MOV R0, #0
+1:      MOV R1, #10
+2:      MOC R2, #1
+LOOP:   ADD R0, R1
+4:      SUB R1, R2
+5:      JNZ R1, LOOP
+```
+
+### ❓ 다음 address size들에 해당하는 address space를 구하여라. (a) 8-bit, (b) 16-bit, (c) 24-bit, (d) 32-bit, (e) 64-bit
+Address Size(bits) | Address Space
+:---:|:---:
+8|$2^{8} - 1 = 255$
+16|$2^{16} - 1 =  65,535$
+24|$2^{24} - 1 = 16,777,215$
+32|$2^{32} - 1 = 4,294,967,295$
+64|$2^{64} - 1$
+
+### ❓❓❓ (a) Array "short int M[256]"의 내용을 지우는(즉, 모두 0으로 설정하는) C 프로그램을 작성하라. (b) M이 location 256에서 시작(511에서 끝)한다고 가정하고 같은 프로그램을 어셈블리 언어로 작성해라. (c) 실행 시간을 측정하라.
+(a)
+```c
+for(int i = 0; i < 256; i++) {
+    M[i] = 0;
+}
+```
+(b)
+```assembly
+        MOV     R1, #256    // i = 256 start location of M
+        MOV     R2, #1      // R2 = constant value of 1
+        MOV     R3, #256    // R3 = constant value of 256
+        MOV     R4, #0      // R4 = constant value of 0
+
+LOOP:   MOV     @R1, R4     // M[R1] = 0
+        ADD     R1, R2      // R1++
+        SUB     R3, R2      // R3--
+        JNZ R3, Loop        // counter가 zero에 있으면 모든 구역 clear 완료
+```
 
 
 ## 🔵 Operating System
