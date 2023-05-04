@@ -128,16 +128,6 @@ Operand field에 data가 바로 들어있다.
 1. `M[PC]`를 IR로 fetch한다.
 2. immediate value를 레지스터 `Rn`으로 불러온다.
 
-### ❓ 합을 구하는 어셈블리 프로그램의 크기를 줄이기 위해 하나의 instruction을 instruction set에 추가한다면 ..
-`JNZ Rn, relative`를 추가한다면 어떨까 ?
-```
-0:      MOV R0, #0
-1:      MOV R1, #10
-2:      MOC R2, #1
-LOOP:   ADD R0, R1
-4:      SUB R1, R2
-5:      JNZ R1, LOOP
-```
 
 ### ❓ 다음 address size들에 해당하는 address space를 구하여라. (a) 8-bit, (b) 16-bit, (c) 24-bit, (d) 32-bit, (e) 64-bit
 Address Size(bits) | Address Space
@@ -147,27 +137,7 @@ Address Size(bits) | Address Space
 24|$2^{24} - 1 = 16,777,215$
 32|$2^{32} - 1 = 4,294,967,295$
 64|$2^{64} - 1$
-
-### ❓❓❓ (a) Array "short int M[256]"의 내용을 지우는(즉, 모두 0으로 설정하는) C 프로그램을 작성하라. (b) M이 location 256에서 시작(511에서 끝)한다고 가정하고 같은 프로그램을 어셈블리 언어로 작성해라. (c) 실행 시간을 측정하라.
-(a)
-```c
-for(int i = 0; i < 256; i++) {
-    M[i] = 0;
-}
 ```
-(b)
-```assembly
-        MOV     R1, #256    // i = 256 start location of M
-        MOV     R2, #1      // R2 = constant value of 1
-        MOV     R3, #256    // R3 = constant value of 256
-        MOV     R4, #0      // R4 = constant value of 0
-
-LOOP:   MOV     @R1, R4     // M[R1] = 0
-        ADD     R1, R2      // R1++
-        SUB     R3, R2      // R3--
-        JNZ R3, Loop        // counter가 zero에 있으면 모든 구역 clear 완료
-```
-
 
 ## 🔵 Operating System
 * 선택적 소프트웨어 레이어  
