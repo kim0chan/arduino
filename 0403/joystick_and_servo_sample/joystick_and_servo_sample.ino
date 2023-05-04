@@ -1,44 +1,52 @@
-// Example testing sketch for various DHT humidity/temperature sensors
-// Written by ladyada, public domain
+#include <Servo.h>
+Servo x_servo;
+Servo y_servo;
+int buzzerPin = 9;
+int GRN = 5;
+int RED = 6;
 
-#include "DHT.h"
+int state = random(0, 2);
 
-#define DHTPIN 2     // what pin we're connected to
-
-// Uncomment whatever type you're using!
-//#define DHTTYPE DHT11   // DHT 11 
-#define DHTTYPE DHT22   // DHT 22  (AM2302)
-//#define DHTTYPE DHT21   // DHT 21 (AM2301)
-
-// Connect pin 1 (on the left) of the sensor to +5V
-// Connect pin 2 of the sensor to whatever your DHTPIN is
-// Connect pin 4 (on the right) of the sensor to GROUND
-// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
-
-DHT dht(DHTPIN, DHTTYPE);
+unsigned long prev_time = 0;
+unsigned long INTERVAL = 5000;
 
 void setup() {
-  Serial.begin(9600); 
-  Serial.println("DHTxx test!");
- 
-  dht.begin();
+  Serial.begin(9600);
+  pinMode(12, INPUT_PULLUP);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(GRN, OUTPUT);
+  pinMode(RED, OUTPUT);
+  x_servo.attach(10);
+  y_servo.attach(11);
 }
 
 void loop() {
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
-
-  // check if returns are valid, if they are NaN (not a number) then something went wrong!
-  if (isnan(t) || isnan(h)) {
-    Serial.println("Failed to read from DHT");
-  } else {
-    Serial.print("Humidity: "); 
-    Serial.print(h);
-    Serial.print(" %\t");
-    Serial.print("Temperature: "); 
-    Serial.print(t);
-    Serial.println(" *C");
+  unsigned long cur_time = millis();
+  if(cur_time - prev_time >= INTERVAL) {
+        prev_time = cur_time;
+        state = random(0, 2);
   }
+
+  int xAxis = analogRead(A0);
+  int yAxis = analogRead(A1);
+  int dx = map(xAxis, 0, 1023, 0, 180);
+  int dy = map(yAxis, 0, 1023, 0, 180);
+  x_servo.write(dx);
+  y_servo.write(dy);
+
+  if(state) {
+    digitalWrite(GRN, LOW);
+    digitalWrite(RED, HIGH);
+    if(abs(dx - 90) > 10 || abs(dy - 90) > 10) ring();
+  }
+  else {
+    digitalWrite(RED, LOW);
+    digitalWrite(GRN, HIGH);
+  }
+  
+  delay(10);
+}
+
+void ring() {
+  tone(buzzerPin, 523, 500);
 }
